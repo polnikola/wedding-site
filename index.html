@@ -282,14 +282,16 @@
         </div>
 
         <sc-if value="{{ isGoing }}" hint-placeholder-val="{{ true }}">
-          <div style="margin-bottom:22px">
-            <label for="g-guests" style="display:block;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7a6f60;margin-bottom:9px">Сколько вас будет всего?</label>
-            <input id="g-guests" type="number" inputMode="numeric" min="1" max="10" step="1" value="{{ guests }}" onChange="{{ onGuests }}" style="width:100%;box-sizing:border-box;min-height:48px;padding:13px 14px;border:1px solid rgba(86,74,66,.28);background:#fffdf9;color:#463b34;font-family:var(--font-body);font-size:16px">
-          </div>
           <div>
             <label for="g-plus" style="display:block;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7a6f60;margin-bottom:9px">Придёте с кем-то?</label>
             <input id="g-plus" type="text" onChange="{{ onPlus }}" placeholder="Имя спутника или «буду один»" style="width:100%;box-sizing:border-box;min-height:48px;padding:13px 14px;border:1px solid rgba(86,74,66,.28);background:#fffdf9;color:#463b34;font-family:var(--font-body);font-size:16px">
           </div>
+          <sc-if value="{{ hasPlus }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:22px">
+            <label for="g-guests" style="display:block;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7a6f60;margin-bottom:9px">Сколько вас будет всего?</label>
+            <input id="g-guests" type="number" inputMode="numeric" min="1" max="10" step="1" value="{{ guests }}" onChange="{{ onGuests }}" style="width:100%;box-sizing:border-box;min-height:48px;padding:13px 14px;border:1px solid rgba(86,74,66,.28);background:#fffdf9;color:#463b34;font-family:var(--font-body);font-size:16px">
+          </div>
+          </sc-if>
           <div style="margin-top:22px">
             <div style="font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7a6f60;margin-bottom:10px">Будете с детьми?</div>
             <input id="g-kids" type="text" onChange="{{ onKids }}" placeholder="Имена и возраст или «без детей»" style="width:100%;box-sizing:border-box;min-height:48px;padding:13px 14px;border:1px solid rgba(86,74,66,.28);background:#fffdf9;color:#463b34;font-family:var(--font-body);font-size:16px">
@@ -660,7 +662,7 @@ class Component extends DCLogic {
           comment: text,
           going: this.state.going === "yes" ? "Придёт" : "Не сможет",
           companions: this.state.plus,
-          guests: Math.min(10, Math.max(1, parseInt(this.state.guests, 10) || 1)),
+          guests: (this.state.plus && this.state.plus.trim()) ? Math.min(10, Math.max(1, parseInt(this.state.guests, 10) || 1)) : 1,
           kids: this.state.kids,
           contact: this.state.contact,
           message: text
@@ -740,6 +742,7 @@ class Component extends DCLogic {
       onPlus: (e) => this.setState({ plus: e.target.value }),
       onGuests: (e) => this.setState({ guests: e.target.value }),
       guests: st.guests,
+      hasPlus: !!(st.plus && st.plus.trim()),
       onKids: (e) => this.setState({ kids: e.target.value }),
       onContact: (e) => this.setState({ contact: e.target.value }),
       onGoing: (e) => this.setState({ going: e.target.value, error: "" }),
