@@ -291,7 +291,10 @@
           </div>
           <div style="margin-top:22px">
             <div style="font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7a6f60;margin-bottom:10px">Будете с детьми?</div>
-            <input id="g-kids" type="text" onChange="{{ onKids }}" placeholder="Имена и возраст или «без детей»" style="width:100%;box-sizing:border-box;min-height:48px;padding:13px 14px;border:1px solid rgba(86,74,66,.28);background:#fffdf9;color:#463b34;font-family:var(--font-body);font-size:16px">
+            <div style="display:flex;gap:10px">
+              <label style="flex:1;display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid rgba(86,74,66,.24);font-size:16px;cursor:pointer;background:#fffdf9;min-height:48px;box-sizing:border-box;color:#55493f" style-hover="border-color:#6b6a4e;background:rgba(127,128,99,.07)"><input type="radio" name="kids" value="yes" onChange="{{ onKids }}" style="accent-color:#6b6a4e;width:18px;height:18px"><span>Да</span></label>
+              <label style="flex:1;display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid rgba(86,74,66,.24);font-size:16px;cursor:pointer;background:#fffdf9;min-height:48px;box-sizing:border-box;color:#55493f" style-hover="border-color:#6b6a4e;background:rgba(127,128,99,.07)"><input type="radio" name="kids" value="no" onChange="{{ onKids }}" style="accent-color:#6b6a4e;width:18px;height:18px"><span>Нет</span></label>
+            </div>
           </div>
           <sc-if value="{{ hasKids }}" hint-placeholder-val="{{ true }}">
           <div style="margin-top:22px">
@@ -636,7 +639,7 @@ class Component extends DCLogic {
       "Гость: " + st.name,
       "Ответ: " + (st.going === "yes" ? "Придёт" : "Не сможет"),
       st.going === "yes" && st.plus ? "Со спутником: " + (st.plus === "yes" ? "да" : "нет") : null,
-      st.going === "yes" && st.kids ? "Дети: " + st.kids : null,
+      st.going === "yes" && st.kids ? "С детьми: " + (st.kids === "yes" ? "да" : "нет") : null,
       st.contact ? "Связь: " + st.contact : null,
       "Отправлено: " + new Date().toLocaleString("ru-RU")
     ].filter(Boolean).join("\n");
@@ -665,8 +668,8 @@ class Component extends DCLogic {
           comment: text,
           going: this.state.going === "yes" ? "Придёт" : "Не сможет",
           companions: this.state.plus === "yes" ? "Да" : this.state.plus === "no" ? "Нет" : "",
-          guests: (this.state.kids && this.state.kids.trim() && !/^\s*(\u0431\u0435\u0437|\u043d\u0435\u0442|\u043d\u0435 \u0431\u0443\u0434)/i.test(this.state.kids)) ? Math.min(10, Math.max((this.state.plus === "yes" ? 2 : 1) + 1, parseInt(this.state.guests, 10) || ((this.state.plus === "yes" ? 2 : 1) + 1))) : (this.state.plus === "yes" ? 2 : 1),
-          kids: this.state.kids,
+          guests: (this.state.kids === "yes") ? Math.min(10, Math.max((this.state.plus === "yes" ? 2 : 1) + 1, parseInt(this.state.guests, 10) || ((this.state.plus === "yes" ? 2 : 1) + 1))) : (this.state.plus === "yes" ? 2 : 1),
+          kids: this.state.kids === "yes" ? "Да" : this.state.kids === "no" ? "Нет" : "",
           contact: this.state.contact,
           message: text
         })
@@ -745,7 +748,7 @@ class Component extends DCLogic {
       onPlus: (e) => this.setState({ plus: e.target.value }),
       onGuests: (e) => this.setState({ guests: e.target.value }),
       guests: st.guests,
-      hasKids: !!(st.kids && st.kids.trim() && !/^\s*(\u0431\u0435\u0437|\u043d\u0435\u0442|\u043d\u0435 \u0431\u0443\u0434)/i.test(st.kids)),
+      hasKids: st.kids === "yes",
       onKids: (e) => this.setState({ kids: e.target.value }),
       onContact: (e) => this.setState({ contact: e.target.value }),
       onGoing: (e) => this.setState({ going: e.target.value, error: "" }),
