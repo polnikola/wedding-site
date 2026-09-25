@@ -282,6 +282,10 @@
         </div>
 
         <sc-if value="{{ isGoing }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-bottom:22px">
+            <label for="g-guests" style="display:block;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7a6f60;margin-bottom:9px">Сколько вас будет всего?</label>
+            <input id="g-guests" type="number" inputMode="numeric" min="1" max="10" step="1" value="{{ guests }}" onChange="{{ onGuests }}" style="width:100%;box-sizing:border-box;min-height:48px;padding:13px 14px;border:1px solid rgba(86,74,66,.28);background:#fffdf9;color:#463b34;font-family:var(--font-body);font-size:16px">
+          </div>
           <div>
             <label for="g-plus" style="display:block;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#7a6f60;margin-bottom:9px">Придёте с кем-то?</label>
             <input id="g-plus" type="text" onChange="{{ onPlus }}" placeholder="Имя спутника или «буду один»" style="width:100%;box-sizing:border-box;min-height:48px;padding:13px 14px;border:1px solid rgba(86,74,66,.28);background:#fffdf9;color:#463b34;font-family:var(--font-body);font-size:16px">
@@ -338,7 +342,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:900},&quot;bgVideoUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Фон&quot;},&quot;bgImageUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Фон&quot;},&quot;telegramBotToken&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Куда приходят ответы&quot;},&quot;telegramChatId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Куда приходят ответы&quot;},&quot;emailEndpoint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Куда приходят ответы&quot;},&quot;eventDate&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-10-03T15:00:00+03:00&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Событие&quot;},&quot;rsvpDeadline&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;15 сентября 2026&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Событие&quot;},&quot;hostName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Дана, координатор&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Организатор&quot;},&quot;hostPhone&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;+7 960 405 92 21&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Организатор&quot;},&quot;hostTelegram&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;@joychik&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Организатор&quot;}}">
 class Component extends DCLogic {
-  state = { d: "—", h: "—", m: "—", s: "—", open: false, hasOpened: false, closing: false, name: "", going: "", plus: "", kids: "", contact: "", error: "", sending: false, sent: false };
+  state = { d: "—", h: "—", m: "—", s: "—", open: false, hasOpened: false, closing: false, name: "", going: "", plus: "", guests: "1", kids: "", contact: "", error: "", sending: false, sent: false };
 
   componentDidMount() {
     try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (e) {}
@@ -656,6 +660,7 @@ class Component extends DCLogic {
           comment: text,
           going: this.state.going === "yes" ? "Придёт" : "Не сможет",
           companions: this.state.plus,
+          guests: Math.min(10, Math.max(1, parseInt(this.state.guests, 10) || 1)),
           kids: this.state.kids,
           contact: this.state.contact,
           message: text
@@ -733,6 +738,8 @@ class Component extends DCLogic {
       deadline: this.props.rsvpDeadline ?? "1 сентября 2026",
       onName: (e) => this.setState({ name: e.target.value }),
       onPlus: (e) => this.setState({ plus: e.target.value }),
+      onGuests: (e) => this.setState({ guests: e.target.value }),
+      guests: st.guests,
       onKids: (e) => this.setState({ kids: e.target.value }),
       onContact: (e) => this.setState({ contact: e.target.value }),
       onGoing: (e) => this.setState({ going: e.target.value, error: "" }),
